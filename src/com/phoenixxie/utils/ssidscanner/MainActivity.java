@@ -59,14 +59,15 @@ public class MainActivity extends Activity {
 	 */
 	public static class PlaceholderFragment extends Fragment {
 
-
-		TextView txtStatus;
 		ListView lvSSID;
 		Button btnScan;
-		Button btnStop;
+		Button btnStopScan;
+		Button btnRecord;
+		Button btnStopRecord;
 		SimpleAdapter adapter;
 
 		SSIDUpdater updater;
+		TextRecorder recorder;
 		int ssidCount = 0;
 		ArrayList<HashMap<String, String>> ssids = new ArrayList<HashMap<String, String>>();
 
@@ -79,10 +80,12 @@ public class MainActivity extends Activity {
 			View rootView = inflater.inflate(R.layout.fragment_main, container,
 					false);
 
-			txtStatus = (TextView) rootView.findViewById(R.id.textViewStatus);
 			lvSSID = (ListView) rootView.findViewById(R.id.listViewSSID);
 			btnScan = (Button) rootView.findViewById(R.id.buttonScan);
-			btnStop = (Button) rootView.findViewById(R.id.buttonStop);
+			btnStopScan = (Button) rootView.findViewById(R.id.buttonStopScan);
+			btnRecord = (Button) rootView.findViewById(R.id.buttonRecord);
+			btnStopRecord = (Button) rootView
+					.findViewById(R.id.buttonStopRecord);
 
 			btnScan.setOnClickListener(new OnClickListener() {
 
@@ -90,25 +93,47 @@ public class MainActivity extends Activity {
 				public void onClick(View btn) {
 					btnScan.setEnabled(false);
 					updater.start();
-					btnStop.setEnabled(true);
+					btnStopScan.setEnabled(true);
 				}
 			});
-			
-			btnStop.setOnClickListener(new OnClickListener() {
+
+			btnStopScan.setOnClickListener(new OnClickListener() {
 
 				@Override
 				public void onClick(View v) {
 					updater.stop();
 					btnScan.setEnabled(true);
-					btnStop.setEnabled(false);
+					btnStopScan.setEnabled(false);
+				}
+			});
+
+			btnRecord.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					recorder.start();
+					btnStopRecord.setEnabled(true);
+					btnRecord.setEnabled(false);
+				}
+			});
+
+			btnStopRecord.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					recorder.stop();
+					btnRecord.setEnabled(true);
+					btnStopRecord.setEnabled(false);
 				}
 			});
 
 			adapter = new SimpleAdapter(getActivity(), ssids,
 					R.layout.ssid_grid,
-					new String[] { "key", "level", "freq"}, new int[] {
-							R.id.ssid_name, R.id.ssid_level, R.id.ssid_freq});
+					new String[] { "key", "level", "freq" }, new int[] {
+							R.id.ssid_name, R.id.ssid_level, R.id.ssid_freq });
 			lvSSID.setAdapter(this.adapter);
+
+			recorder = new TextRecorder(getActivity(), "/mnt/sdcard");
 
 			updater = new SSIDUpdater(getActivity());
 			updater.init();
@@ -120,12 +145,26 @@ public class MainActivity extends Activity {
 					ssidCount = results.size();
 
 					ssidCount = ssidCount - 1;
+
+					long unixTime = System.currentTimeMillis() / 1000L;
 					while (ssidCount >= 0) {
 						HashMap<String, String> item = new HashMap<String, String>();
 						item.put("key", results.get(ssidCount).SSID + "  "
 								+ results.get(ssidCount).capabilities);
 						item.put("freq", "" + results.get(ssidCount).frequency);
 						item.put("level", "" + results.get(ssidCount).level);
+
+						StringBuilder builder = new StringBuilder();
+						builder.append(unixTime).append(",")
+								.append(results.get(ssidCount).SSID)
+								.append(",")
+								.append(results.get(ssidCount).capabilities)
+								.append(",")
+								.append(results.get(ssidCount).level)
+								.append(",")
+								.append(results.get(ssidCount).frequency);
+
+						recorder.writeLine(builder.toString());
 
 						ssids.add(item);
 						ssidCount--;
