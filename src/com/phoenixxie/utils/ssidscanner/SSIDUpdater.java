@@ -1,6 +1,7 @@
 package com.phoenixxie.utils.ssidscanner;
 
-
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
@@ -22,7 +23,7 @@ public class SSIDUpdater {
 
 	WifiManager wifi = null;
 	List<ScanResult> results;
-	
+
 	Semaphore lock = new Semaphore(1, false);
 
 	public SSIDUpdater(Context context) {
@@ -62,7 +63,7 @@ public class SSIDUpdater {
 			return;
 		}
 		running = true;
-		
+
 		lock.drainPermits();
 
 		(new Thread(new SSIDUpdaterRunnable())).start();
@@ -79,7 +80,7 @@ public class SSIDUpdater {
 			while (running) {
 
 				wifi.startScan();
-				
+
 				try {
 					lock.acquire();
 					Thread.sleep(timeout);
@@ -92,5 +93,28 @@ public class SSIDUpdater {
 
 	public static interface SSIDUpdateListener {
 		public void update(final List<ScanResult> results);
+	}
+
+	public static class SortedSSIDUpdateAdapter implements SSIDUpdateListener {
+		
+		SSIDUpdateListener inner;
+		
+		public SortedSSIDUpdateAdapter(SSIDUpdateListener listener) {
+			this.inner = listener;
+		}
+		
+		@Override
+		public void update(List<ScanResult> results) {
+			Collections.sort(results, new Comparator<ScanResult> () {
+
+				@Override
+				public int compare(ScanResult lhs, ScanResult rhs) {
+					return lhs.level - rhs.level;
+				}
+				
+			});
+			inner.update(results);
+		}
+
 	}
 }

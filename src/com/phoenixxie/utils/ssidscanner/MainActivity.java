@@ -137,44 +137,50 @@ public class MainActivity extends Activity {
 
 			updater = new SSIDUpdater(getActivity());
 			updater.init();
-			updater.setListener(new SSIDUpdater.SSIDUpdateListener() {
+			updater.setListener(new SSIDUpdater.SortedSSIDUpdateAdapter(
+					new SSIDUpdater.SSIDUpdateListener() {
 
-				@Override
-				public void update(List<ScanResult> results) {
-					ssids.clear();
-					ssidCount = results.size();
+						@Override
+						public void update(List<ScanResult> results) {
+							ssids.clear();
+							ssidCount = results.size();
 
-					ssidCount = ssidCount - 1;
+							ssidCount = ssidCount - 1;
 
-					long unixTime = System.currentTimeMillis() / 1000L;
-					while (ssidCount >= 0) {
-						HashMap<String, String> item = new HashMap<String, String>();
-						item.put("key", results.get(ssidCount).SSID + "  "
-								+ results.get(ssidCount).capabilities);
-						item.put("freq", "" + results.get(ssidCount).frequency);
-						item.put("level", "" + results.get(ssidCount).level);
+							long unixTime = System.currentTimeMillis() / 1000L;
+							while (ssidCount >= 0) {
+								HashMap<String, String> item = new HashMap<String, String>();
+								item.put("key", results.get(ssidCount).SSID
+										+ "("
+										+ results.get(ssidCount).BSSID
+										+ ")");
+								item.put("freq", ""
+										+ results.get(ssidCount).frequency);
+								item.put("level", ""
+										+ results.get(ssidCount).level);
+								
+								StringBuilder builder = new StringBuilder();
+								builder.append(unixTime)
+										.append(",")
+										.append(results.get(ssidCount).SSID)
+										.append(",")
+										.append(results.get(ssidCount).capabilities)
+										.append(",")
+										.append(results.get(ssidCount).level)
+										.append(",")
+										.append(results.get(ssidCount).frequency);
 
-						StringBuilder builder = new StringBuilder();
-						builder.append(unixTime).append(",")
-								.append(results.get(ssidCount).SSID)
-								.append(",")
-								.append(results.get(ssidCount).capabilities)
-								.append(",")
-								.append(results.get(ssidCount).level)
-								.append(",")
-								.append(results.get(ssidCount).frequency);
+								recorder.writeLine(builder.toString());
 
-						recorder.writeLine(builder.toString());
+								ssids.add(item);
+								ssidCount--;
 
-						ssids.add(item);
-						ssidCount--;
+								adapter.notifyDataSetChanged();
+							}
 
-						adapter.notifyDataSetChanged();
-					}
+						}
 
-				}
-
-			});
+					}));
 
 			return rootView;
 		}
