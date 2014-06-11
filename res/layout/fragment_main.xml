@@ -6,51 +6,47 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.phoenixxie.utils.ssidscanner.MainActivity$PlaceholderFragment" >
+    tools:context="com.phoenixxie.utils.wireless.MainActivity$PlaceholderFragment" >
 
+    <Switch
+        android:id="@+id/switchScan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textOff="Bluetooth"
+        android:textOn="Wifi" />
+
+    <CheckBox
+        android:id="@+id/checkBoxBonded"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/listViewSSID"
+        android:layout_alignTop="@+id/switchScan"
+        android:text="Bonded?" />
+    
     <ListView
         android:id="@+id/listViewSSID"
         android:layout_width="fill_parent"
-        android:layout_height="350dp"
-        >
+        android:layout_height="330dp"
+        android:layout_below="@+id/switchScan" >
     </ListView>
-
-    <Button
-        android:id="@+id/buttonScan"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/listViewSSID"
-        android:layout_marginLeft="44dp"
-        android:layout_marginTop="30dp"
-        android:text="Scan" />
-
-    <Button
-        android:id="@+id/buttonStopScan"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/listViewSSID"
-        android:layout_alignTop="@+id/buttonScan"
-        android:layout_toRightOf="@+id/buttonScan"
-        android:layout_marginLeft="44dp"
-        android:enabled="false"
-        android:text="Stop scan" />
 
     <Button
         android:id="@+id/buttonRecord"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/buttonScan"
-        android:layout_below="@+id/buttonScan"
+        android:layout_alignLeft="@+id/listViewSSID"
+        android:layout_below="@+id/listViewSSID"
         android:text="Record" />
 
     <Button
         android:id="@+id/buttonStopRecord"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/listViewSSID"
         android:layout_alignTop="@+id/buttonRecord"
-        android:layout_below="@+id/buttonStopScan"
-        android:layout_alignLeft="@+id/buttonStopScan"
+        android:layout_below="@+id/listViewSSID"
         android:enabled="false"
         android:text="Stop record" />
+
 
 </RelativeLayout>

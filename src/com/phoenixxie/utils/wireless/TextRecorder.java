@@ -1,4 +1,4 @@
-package com.phoenixxie.utils.ssidscanner;
+package com.phoenixxie.utils.wireless;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -7,7 +7,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.content.Context;
-import android.os.Environment;
 import android.util.Log;
 
 public class TextRecorder {

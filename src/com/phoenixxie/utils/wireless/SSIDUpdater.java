@@ -1,10 +1,11 @@
-package com.phoenixxie.utils.ssidscanner;
+package com.phoenixxie.utils.wireless;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -15,7 +16,7 @@ import android.widget.Toast;
 
 public class SSIDUpdater {
 
-	Context context;
+	Activity activity;
 
 	SSIDUpdateListener listener;
 	int timeout = 200; // milliseconds
@@ -26,8 +27,8 @@ public class SSIDUpdater {
 
 	Semaphore lock = new Semaphore(1, false);
 
-	public SSIDUpdater(Context context) {
-		this.context = context;
+	public SSIDUpdater(Activity context) {
+		this.activity = context;
 	}
 
 	public void setListener(SSIDUpdateListener listener) {
@@ -41,14 +42,14 @@ public class SSIDUpdater {
 	public void init() {
 		running = false;
 
-		wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+		wifi = (WifiManager) activity.getSystemService(Context.WIFI_SERVICE);
 		if (!wifi.isWifiEnabled()) {
-			Toast.makeText(context, "Wifi is disabled. I will enable it.",
+			Toast.makeText(activity, "Wifi is disabled. I will enable it.",
 					Toast.LENGTH_LONG).show();
 			wifi.setWifiEnabled(true);
 		}
 
-		context.registerReceiver(new BroadcastReceiver() {
+		activity.registerReceiver(new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context c, Intent intent) {
 				lock.release();

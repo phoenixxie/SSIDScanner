@@ -3,5 +3,5 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.phoenixxie.utils.ssidscanner.MainActivity"
+    tools:context="com.phoenixxie.utils.wireless.MainActivity"
     tools:ignore="MergeRootFrame" />
